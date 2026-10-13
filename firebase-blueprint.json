@@ -1,0 +1,166 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "User profile for teachers, students, and administrators.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "role": { "type": "string", "enum": ["student", "teacher", "admin"] },
+        "studentId": { "type": "string", "maxLength": 50 },
+        "teacherId": { "type": "string", "maxLength": 50 },
+        "schoolId": { "type": "string", "maxLength": 50 },
+        "classIds": { "type": "array" },
+        "accountStatus": { "type": "string", "enum": ["active", "suspended"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "displayName", "role"]
+    },
+    "class": {
+      "title": "Class",
+      "description": "School class (e.g. 3 Merah / 3 红班).",
+      "type": "object",
+      "properties": {
+        "classId": { "type": "string", "maxLength": 64 },
+        "schoolId": { "type": "string", "maxLength": 50 },
+        "className": { "type": "string", "maxLength": 100 },
+        "gradeLevel": { "type": "string", "maxLength": 20 },
+        "academicYear": { "type": "string", "maxLength": 20 },
+        "teacherIds": { "type": "array" },
+        "studentIds": { "type": "array" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["classId", "className", "gradeLevel"]
+    },
+    "assignment": {
+      "title": "Assignment",
+      "description": "Homework, digital worksheet or assessment assigned by teacher.",
+      "type": "object",
+      "properties": {
+        "assignmentId": { "type": "string", "maxLength": 64 },
+        "schoolId": { "type": "string", "maxLength": 50 },
+        "teacherId": { "type": "string", "maxLength": 128 },
+        "classIds": { "type": "array" },
+        "title": { "type": "string", "maxLength": 200 },
+        "subject": { "type": "string", "maxLength": 50 },
+        "gradeLevel": { "type": "string", "maxLength": 20 },
+        "instructions": { "type": "string", "maxLength": 2000 },
+        "worksheetDataUrl": { "type": "string" },
+        "worksheetFileName": { "type": "string", "maxLength": 200 },
+        "worksheetFileType": { "type": "string", "maxLength": 50 },
+        "pageCount": { "type": "number" },
+        "maximumMarks": { "type": "number" },
+        "deadline": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "published", "closed"] },
+        "allowResubmission": { "type": "boolean" },
+        "feedbackReleaseSettings": { "type": "string", "enum": ["immediate", "manual", "after_deadline"] },
+        "createdAt": { "type": "string" },
+        "publishedAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["assignmentId", "teacherId", "title", "subject", "gradeLevel", "maximumMarks", "status"]
+    },
+    "submission": {
+      "title": "Submission",
+      "description": "Student assignment submission record.",
+      "type": "object",
+      "properties": {
+        "submissionId": { "type": "string", "maxLength": 128 },
+        "assignmentId": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 100 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "schoolId": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "enum": ["not_started", "in_progress", "submitted", "returned"] },
+        "currentVersion": { "type": "number" },
+        "submittedAt": { "type": "string" },
+        "lastCloudSyncAt": { "type": "string" },
+        "markingStatus": { "type": "string", "enum": ["pending", "in_progress", "marked"] },
+        "totalMarks": { "type": "number" },
+        "maximumMarks": { "type": "number" },
+        "resultsReleasedAt": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["submissionId", "assignmentId", "studentId", "status"]
+    },
+    "answer": {
+      "title": "Answer",
+      "description": "Per-page student answer layer data.",
+      "type": "object",
+      "properties": {
+        "answerId": { "type": "string", "maxLength": 128 },
+        "submissionId": { "type": "string", "maxLength": 128 },
+        "pageNumber": { "type": "number" },
+        "answerVersion": { "type": "number" },
+        "strokeData": { "type": "string" },
+        "typedTextObjects": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["answerId", "submissionId", "pageNumber"]
+    },
+    "marking": {
+      "title": "Marking",
+      "description": "Teacher annotations, marks, and feedback on student submission.",
+      "type": "object",
+      "properties": {
+        "markingId": { "type": "string", "maxLength": 128 },
+        "submissionId": { "type": "string", "maxLength": 128 },
+        "teacherId": { "type": "string", "maxLength": 128 },
+        "pageNumber": { "type": "number" },
+        "annotationData": { "type": "string" },
+        "questionScores": { "type": "string" },
+        "overallFeedback": { "type": "string", "maxLength": 2000 },
+        "markingStatus": { "type": "string", "enum": ["draft", "released"] },
+        "updatedAt": { "type": "string" },
+        "releasedAt": { "type": "string" }
+      },
+      "required": ["markingId", "submissionId", "teacherId"]
+    },
+    "admin": {
+      "title": "Admin",
+      "description": "Administrator mapping for RBAC.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 120 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "User account profiles."
+    },
+    "/classes/{classId}": {
+      "schema": "class",
+      "description": "School classes."
+    },
+    "/assignments/{assignmentId}": {
+      "schema": "assignment",
+      "description": "Assignments created by teachers."
+    },
+    "/submissions/{submissionId}": {
+      "schema": "submission",
+      "description": "Student submissions."
+    },
+    "/answers/{answerId}": {
+      "schema": "answer",
+      "description": "Per-page student answer layers."
+    },
+    "/markings/{markingId}": {
+      "schema": "marking",
+      "description": "Teacher marking, scoring, and feedback."
+    },
+    "/admins/{adminId}": {
+      "schema": "admin",
+      "description": "Authorized administrators."
+    }
+  }
+}

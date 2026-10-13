@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'packy3033@gmail.com'
+      );
+    }
+
+    // Test connection collection
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+
+    // Admins collection
+    match /admins/{adminId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Users collection (teachers, students, school staff)
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Classes collection
+    match /classes/{classId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Assignments collection
+    match /assignments/{assignmentId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Submissions collection
+    match /submissions/{submissionId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Answers collection (student page-by-page handwriting & text)
+    match /answers/{answerId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Markings collection (teacher annotations & feedback)
+    match /markings/{markingId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}
