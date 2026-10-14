@@ -16,7 +16,7 @@ import {
   Sparkles,
   School
 } from 'lucide-react';
-import { useAuth, DEMO_PERSONAS } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { Language, UserRole } from '../types';
 import { translations } from '../utils/translations';
 import { HandwritingPadModal } from './student/HandwritingPadModal';
@@ -66,13 +66,22 @@ export const Navigation: React.FC<NavigationProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Persona Quick Switcher Button */}
+            {/* Google Account / Sign-in */}
             <button
               onClick={() => setShowRoleModal(true)}
-              className="flex items-center gap-1 text-amber-300 hover:text-amber-200 font-bold transition cursor-pointer"
+              className="flex items-center gap-1.5 text-amber-300 hover:text-amber-200 font-bold transition cursor-pointer"
             >
-              <UserCheck className="w-3 h-3" />
-              <span>切换身份 / 模拟测试 ({currentUser?.displayName})</span>
+              {firebaseUser ? (
+                <>
+                  <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Google: {firebaseUser.displayName || firebaseUser.email}</span>
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>使用 Google 登录</span>
+                </>
+              )}
             </button>
 
             {/* Language Picker */}

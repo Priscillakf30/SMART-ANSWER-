@@ -157,27 +157,39 @@ export const ClassManagement: React.FC<ClassManagementProps> = ({ lang }) => {
             <span className="text-xs text-slate-400 font-normal">共 {classes.length} 班</span>
           </h2>
 
-          <div className="space-y-2">
-            {classes.map(cls => (
+          {classes.length === 0 ? (
+            <div className="text-center py-10 px-3 text-slate-400 text-xs">
+              <p className="mb-2">暂无班级记录</p>
               <button
-                key={cls.classId}
-                onClick={() => setSelectedClass(cls)}
-                className={`w-full text-left p-3.5 rounded-xl border transition flex items-center justify-between ${
-                  selectedClass?.classId === cls.classId
-                    ? 'bg-sky-50 border-sky-300 text-sky-900 font-bold shadow-sm'
-                    : 'border-slate-200 hover:bg-slate-50 text-slate-700'
-                }`}
+                onClick={() => setShowAddClassModal(true)}
+                className="text-sky-600 hover:text-sky-700 font-bold"
               >
-                <div>
-                  <div className="text-sm">{cls.className}</div>
-                  <div className="text-xs text-slate-400 font-normal mt-0.5">
-                    {cls.gradeLevel} • 学年 {cls.academicYear}
-                  </div>
-                </div>
-                <Users className="w-4 h-4 text-slate-400" />
+                + 创建第一个班级
               </button>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {classes.map(cls => (
+                <button
+                  key={cls.classId}
+                  onClick={() => setSelectedClass(cls)}
+                  className={`w-full text-left p-3.5 rounded-xl border transition flex items-center justify-between ${
+                    selectedClass?.classId === cls.classId
+                      ? 'bg-sky-50 border-sky-300 text-sky-900 font-bold shadow-sm'
+                      : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                  }`}
+                >
+                  <div>
+                    <div className="text-sm">{cls.className}</div>
+                    <div className="text-xs text-slate-400 font-normal mt-0.5">
+                      {cls.gradeLevel} • 学年 {cls.academicYear}
+                    </div>
+                  </div>
+                  <Users className="w-4 h-4 text-slate-400" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right Panel: Class Students Roster */}
@@ -244,7 +256,7 @@ export const ClassManagement: React.FC<ClassManagementProps> = ({ lang }) => {
             </div>
           ) : (
             <div className="text-center py-16 text-slate-400 text-sm">
-              请选择一个班级查看详情
+              {classes.length === 0 ? '暂无班级数据，请先创建新班级并分配学生' : '请选择一个班级查看详情'}
             </div>
           )}
         </div>

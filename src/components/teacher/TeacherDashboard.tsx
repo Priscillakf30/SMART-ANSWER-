@@ -134,13 +134,29 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
           </p>
         </div>
 
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm px-5 py-3 rounded-2xl shadow-lg shadow-sky-900/50 transition transform hover:-translate-y-0.5 active:translate-y-0 self-start md:self-auto shrink-0"
-        >
-          <Plus className="w-5 h-5" />
-          <span>{t.dashboard.createAssignmentBtn}</span>
-        </button>
+        <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0 flex-wrap">
+          <button
+            onClick={async () => {
+              if (confirm('确定要清空全部数据吗？将删除所有作业、答卷与班级记录。')) {
+                await dbService.clearAllData();
+                loadDashboardData();
+              }
+            }}
+            className="flex items-center gap-1.5 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 hover:text-white border border-rose-800/60 font-medium text-xs px-3.5 py-3 rounded-2xl transition cursor-pointer"
+            title="清空全部测试与示例数据"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>清空全部数据</span>
+          </button>
+
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm px-5 py-3 rounded-2xl shadow-lg shadow-sky-900/50 transition transform hover:-translate-y-0.5 active:translate-y-0"
+          >
+            <Plus className="w-5 h-5" />
+            <span>{t.dashboard.createAssignmentBtn}</span>
+          </button>
+        </div>
       </div>
 
       {/* 8 Mandatory Live Data Summary Cards */}

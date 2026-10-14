@@ -58,8 +58,8 @@ function AppContent() {
       {/* System Footer */}
       <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="text-slate-700 font-semibold text-xs tracking-wide">
-            FKF | Copyright © 2026. All Rights Reserved.
+          <div className="text-slate-700 font-bold text-xs tracking-wider">
+            FKF , COPYRIGHT 2026
           </div>
 
           <div className="flex items-center gap-4 text-[11px] text-slate-400">

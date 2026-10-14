@@ -19,7 +19,6 @@ import {
   MarkingRecord,
   UserProfile
 } from '../types';
-import { SAMPLES_CATALOG } from '../utils/worksheetSamples';
 
 // Local storage key prefix for offline draft resilience
 const DRAFT_PREFIX = 'smart_answer_draft_';
@@ -31,33 +30,7 @@ export const dbService = {
     try {
       const snap = await getDocs(collection(db, collPath));
       if (snap.empty) {
-        // Seed default SJKC classes if empty
-        const defaultClasses: SchoolClass[] = [
-          {
-            classId: 'class-3-merah',
-            schoolId: 'sjkc-yuk-choy',
-            className: '3 红班 (3 Merah)',
-            gradeLevel: '三年级 (Standard 3)',
-            academicYear: '2026',
-            teacherIds: ['teacher-tan-01'],
-            studentIds: ['student-01', 'student-02', 'student-03'],
-            createdAt: new Date().toISOString()
-          },
-          {
-            classId: 'class-4-biru',
-            schoolId: 'sjkc-yuk-choy',
-            className: '4 蓝班 (4 Biru)',
-            gradeLevel: '四年级 (Standard 4)',
-            academicYear: '2026',
-            teacherIds: ['teacher-tan-01'],
-            studentIds: ['student-04', 'student-05'],
-            createdAt: new Date().toISOString()
-          }
-        ];
-        for (const cls of defaultClasses) {
-          await setDoc(doc(db, collPath, cls.classId), cls);
-        }
-        return defaultClasses;
+        return [];
       }
       return snap.docs.map(d => d.data() as SchoolClass);
     } catch (err) {
@@ -77,61 +50,22 @@ export const dbService = {
     }
   },
 
+  async deleteClass(classId: string): Promise<void> {
+    const collPath = 'classes';
+    try {
+      await deleteDoc(doc(db, collPath, classId));
+    } catch (err) {
+      handleFirestoreError(err, OperationType.DELETE, `${collPath}/${classId}`);
+    }
+  },
+
   // ===================== STUDENTS & USERS =====================
   async getStudentsByClass(classId?: string): Promise<UserProfile[]> {
     const collPath = 'users';
     try {
       const snap = await getDocs(collection(db, collPath));
       if (snap.empty) {
-        // Seed realistic SJKC student accounts if none exist
-        const defaultStudents: UserProfile[] = [
-          {
-            uid: 'student-01',
-            displayName: '林小明 (Lim Xiao Ming)',
-            email: 'xiaoming@sjkc.edu.my',
-            role: 'student',
-            studentId: 'SJKC-3M-01',
-            schoolId: 'sjkc-yuk-choy',
-            classIds: ['class-3-merah'],
-            accountStatus: 'active'
-          },
-          {
-            uid: 'student-02',
-            displayName: '黄丽美 (Wong Li Mei)',
-            email: 'limei@sjkc.edu.my',
-            role: 'student',
-            studentId: 'SJKC-3M-02',
-            schoolId: 'sjkc-yuk-choy',
-            classIds: ['class-3-merah'],
-            accountStatus: 'active'
-          },
-          {
-            uid: 'student-03',
-            displayName: '陈伟杰 (Tan Wei Jie)',
-            email: 'weijie@sjkc.edu.my',
-            role: 'student',
-            studentId: 'SJKC-3M-03',
-            schoolId: 'sjkc-yuk-choy',
-            classIds: ['class-3-merah'],
-            accountStatus: 'active'
-          },
-          {
-            uid: 'student-04',
-            displayName: '张秀丽 (Teo Siew Li)',
-            email: 'siewli@sjkc.edu.my',
-            role: 'student',
-            studentId: 'SJKC-4B-01',
-            schoolId: 'sjkc-yuk-choy',
-            classIds: ['class-4-biru'],
-            accountStatus: 'active'
-          }
-        ];
-        for (const s of defaultStudents) {
-          await setDoc(doc(db, collPath, s.uid), s);
-        }
-        return classId
-          ? defaultStudents.filter(s => s.classIds?.includes(classId))
-          : defaultStudents;
+        return [];
       }
       const all = snap.docs.map(d => d.data() as UserProfile);
       const students = all.filter(u => u.role === 'student');
@@ -162,35 +96,7 @@ export const dbService = {
     try {
       const snap = await getDocs(collection(db, collPath));
       if (snap.empty) {
-        // Seed initial sample SJKC assignments from our authentic templates
-        const initialAssignments: Assignment[] = SAMPLES_CATALOG.map((tpl, idx) => ({
-          assignmentId: `asg-${tpl.id}`,
-          schoolId: 'sjkc-yuk-choy',
-          teacherId: 'teacher-tan-01',
-          teacherName: '陈老师 (Cikgu Tan)',
-          classIds: idx === 0 ? ['class-3-merah'] : ['class-4-biru'],
-          title: tpl.title,
-          subject: tpl.subject,
-          gradeLevel: tpl.gradeLevel,
-          instructions: tpl.instructions,
-          worksheetPages: tpl.pages,
-          worksheetFileName: `${tpl.id}.svg`,
-          worksheetFileType: 'image',
-          pageCount: tpl.pageCount,
-          maximumMarks: tpl.maximumMarks,
-          deadline: new Date(Date.now() + 86400000 * 3).toISOString(), // 3 days from now
-          status: 'published',
-          allowResubmission: true,
-          feedbackReleaseSettings: 'immediate',
-          createdAt: new Date().toISOString(),
-          publishedAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }));
-
-        for (const asg of initialAssignments) {
-          await setDoc(doc(db, collPath, asg.assignmentId), asg);
-        }
-        return initialAssignments;
+        return [];
       }
       return snap.docs.map(d => d.data() as Assignment);
     } catch (err) {
@@ -248,102 +154,7 @@ export const dbService = {
       const q = assignmentId ? query(collRef, where('assignmentId', '==', assignmentId)) : collRef;
       const snap = await getDocs(q);
       if (snap.empty) {
-        // Seed initial sample submissions so teacher can immediately mark
-        const initialSubs: Submission[] = [
-          {
-            submissionId: 'sub_asg-sjkc-chinese-grade3-unit1_student-01',
-            assignmentId: 'asg-sjkc-chinese-grade3-unit1',
-            studentId: 'student-01',
-            studentName: '林小明 (Lim Xiao Ming)',
-            studentNumber: 'SJKC-3M-01',
-            classId: 'class-3-merah',
-            schoolId: 'sjkc-yuk-choy',
-            status: 'submitted',
-            currentVersion: 1,
-            submittedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-            markingStatus: 'pending',
-            maximumMarks: 50,
-            createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-            updatedAt: new Date(Date.now() - 3600000 * 2).toISOString()
-          },
-          {
-            submissionId: 'sub_asg-sjkc-chinese-grade3-unit1_student-02',
-            assignmentId: 'asg-sjkc-chinese-grade3-unit1',
-            studentId: 'student-02',
-            studentName: '黄丽美 (Wong Li Mei)',
-            studentNumber: 'SJKC-3M-02',
-            classId: 'class-3-merah',
-            schoolId: 'sjkc-yuk-choy',
-            status: 'in_progress',
-            currentVersion: 1,
-            markingStatus: 'pending',
-            maximumMarks: 50,
-            createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
-            updatedAt: new Date(Date.now() - 3600000 * 1).toISOString()
-          }
-        ];
-        for (const sub of initialSubs) {
-          await setDoc(doc(db, collPath, sub.submissionId), sub);
-        }
-
-        // Seed sample student answer for Xiao Ming on Page 1
-        const sampleAnswerP1: AnswerPageData = {
-          answerId: 'ans_sub_asg-sjkc-chinese-grade3-unit1_student-01_p1',
-          submissionId: 'sub_asg-sjkc-chinese-grade3-unit1_student-01',
-          pageNumber: 1,
-          answerVersion: 1,
-          strokes: [
-            {
-              id: 'str_sample_1',
-              color: '#1d4ed8',
-              size: 3,
-              points: [
-                { x: 0.1, y: 0.52 }, { x: 0.12, y: 0.52 }, { x: 0.15, y: 0.522 },
-                { x: 0.18, y: 0.525 }, { x: 0.22, y: 0.525 }
-              ]
-            }
-          ],
-          typedTexts: [
-            {
-              id: 'txt_sample_1',
-              x: 0.09,
-              y: 0.51,
-              text: '值日老师在校门前向同学们亲切地问好。',
-              fontSize: 15,
-              color: '#1d4ed8'
-            },
-            {
-              id: 'txt_sample_2',
-              x: 0.09,
-              y: 0.63,
-              text: '操场上的同学们在精神抖擞地做着早操，草地上回荡着欢声笑语。',
-              fontSize: 15,
-              color: '#1d4ed8'
-            },
-            {
-              id: 'txt_sample_3',
-              x: 0.23,
-              y: 0.835,
-              text: '亲切',
-              fontSize: 15,
-              color: '#1d4ed8'
-            },
-            {
-              id: 'txt_sample_4',
-              x: 0.23,
-              y: 0.875,
-              text: '宝贵',
-              fontSize: 15,
-              color: '#1d4ed8'
-            }
-          ],
-          updatedAt: new Date().toISOString()
-        };
-        await setDoc(doc(db, 'answers', sampleAnswerP1.answerId), sampleAnswerP1);
-
-        return assignmentId
-          ? initialSubs.filter(s => s.assignmentId === assignmentId)
-          : initialSubs;
+        return [];
       }
       return snap.docs.map(d => d.data() as Submission);
     } catch (err) {
@@ -443,7 +254,6 @@ export const dbService = {
       const snap = await getDoc(doc(db, collPath, docId));
       if (snap.exists()) {
         const cloudData = snap.data() as AnswerPageData;
-        // Keep local cache synced
         localStorage.setItem(`${DRAFT_PREFIX}${docId}`, JSON.stringify(cloudData));
         return cloudData;
       }
@@ -519,5 +329,31 @@ export const dbService = {
         handleFirestoreError(error, OperationType.GET, 'submissions');
       }
     );
+  },
+
+  // ===================== CLEAN / RESET ALL DATA =====================
+  async clearAllData(): Promise<void> {
+    const collectionsToClear = ['assignments', 'submissions', 'answers', 'markings', 'classes', 'users'];
+    for (const c of collectionsToClear) {
+      try {
+        const snap = await getDocs(collection(db, c));
+        for (const docItem of snap.docs) {
+          await deleteDoc(doc(db, c, docItem.id));
+        }
+      } catch (err) {
+        console.error(`Failed to clear ${c}:`, err);
+      }
+    }
+    // Also clear localStorage drafts
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith(DRAFT_PREFIX) || key === 'smart_answer_active_user')) {
+          localStorage.removeItem(key);
+        }
+      }
+    } catch {
+      // ignore
+    }
   }
 };

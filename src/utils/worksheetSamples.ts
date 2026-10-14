@@ -232,42 +232,5 @@ const sjkcMathP2 = `
 </svg>
 `;
 
-export const SAMPLES_CATALOG: WorksheetTemplate[] = [
-  {
-    id: 'sjkc-chinese-grade3-unit1',
-    title: '三年级 华文单元一：美丽的校园 (阅读理解与书写)',
-    subject: '华文 (Bahasa Cina)',
-    gradeLevel: '三年级 (Standard 3)',
-    pageCount: 2,
-    maximumMarks: 50,
-    instructions: '请用手写笔或文字工具在横线和田字格内规范作答。完成第1页和第2页后点击提交。',
-    pages: [createSvgDataUrl(sjkcChineseP1), createSvgDataUrl(sjkcChineseP2)],
-    sampleQuestions: [
-      { number: '一、看拼音写词语', maxMarks: 10 },
-      { number: '二、1. 理解问答', maxMarks: 5 },
-      { number: '二、2. 精神状态分析', maxMarks: 10 },
-      { number: '二、3. 选词填空', maxMarks: 10 },
-      { number: '三、词语造句', maxMarks: 15 },
-    ]
-  },
-  {
-    id: 'sjkc-math-grade4-numbers',
-    title: '四年级 数学：四则运算与实际应用题',
-    subject: '数学 (Matematik)',
-    gradeLevel: '四年级 (Standard 4)',
-    pageCount: 2,
-    maximumMarks: 100,
-    instructions: '请写出完整的直式或横式演算步骤，并在横线上写出最终答案单位。',
-    pages: [createSvgDataUrl(sjkcMathP1), createSvgDataUrl(sjkcMathP2)],
-    sampleQuestions: [
-      { number: '甲组 1. 加法直式', maxMarks: 8 },
-      { number: '甲组 2. 减法直式', maxMarks: 8 },
-      { number: '甲组 3. 乘法直式', maxMarks: 8 },
-      { number: '甲组 4. 除法直式', maxMarks: 8 },
-      { number: '甲组 5. 混合运算', maxMarks: 8 },
-      { number: '乙组 1(a). 下半年产量', maxMarks: 10 },
-      { number: '乙组 1(b). 全年产量', maxMarks: 15 },
-      { number: '乙组 2. 彩色笔应用题', maxMarks: 25 },
-    ]
-  }
-];
+export const SAMPLES_CATALOG: WorksheetTemplate[] = [];
+

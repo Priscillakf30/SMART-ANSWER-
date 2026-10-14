@@ -10,7 +10,6 @@ import {
   Sparkles
 } from 'lucide-react';
 import { Assignment, SchoolClass, Language } from '../../types';
-import { SAMPLES_CATALOG } from '../../utils/worksheetSamples';
 import { dbService } from '../../services/dbService';
 import { useAuth } from '../../contexts/AuthContext';
 import { translations } from '../../utils/translations';
@@ -53,7 +52,7 @@ export const AssignmentCreateModal: React.FC<AssignmentCreateModalProps> = ({
   const [title, setTitle] = useState('');
   const [subject, setSubject] = useState(SJKC_SUBJECTS[0]);
   const [gradeLevel, setGradeLevel] = useState(SJKC_GRADES[2]); // Default standard 3
-  const [selectedClassId, setSelectedClassId] = useState(classes[0]?.classId || 'class-3-merah');
+  const [selectedClassId, setSelectedClassId] = useState(classes[0]?.classId || '');
   const [instructions, setInstructions] = useState('');
   const [maximumMarks, setMaximumMarks] = useState(50);
   const [deadline, setDeadline] = useState(
@@ -67,20 +66,6 @@ export const AssignmentCreateModal: React.FC<AssignmentCreateModalProps> = ({
   const [worksheetFileName, setWorksheetFileName] = useState('');
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-
-  // Apply one of the pre-built authentic SJKC templates
-  const handleSelectTemplate = (templateId: string) => {
-    const tpl = SAMPLES_CATALOG.find(s => s.id === templateId);
-    if (!tpl) return;
-    setTitle(tpl.title);
-    setSubject(tpl.subject);
-    setGradeLevel(tpl.gradeLevel);
-    setInstructions(tpl.instructions);
-    setMaximumMarks(tpl.maximumMarks);
-    setWorksheetPages(tpl.pages);
-    setWorksheetFileName(`${tpl.title}.svg`);
-    setErrorMsg('');
-  };
 
   // Handle local file upload (images or simulated PDF)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +96,7 @@ export const AssignmentCreateModal: React.FC<AssignmentCreateModalProps> = ({
       return;
     }
     if (worksheetPages.length === 0) {
-      setErrorMsg('请上传练习卷或选择华小标准练习卷范本');
+      setErrorMsg('请上传练习卷 (支持单页或多页图片/PDF)');
       return;
     }
 
@@ -179,30 +164,7 @@ export const AssignmentCreateModal: React.FC<AssignmentCreateModalProps> = ({
             </div>
           )}
 
-          {/* Quick SJKC Template Picker */}
-          <div>
-            <label className="font-bold text-slate-900 block mb-1.5 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              <span>华小标准练习卷范本 (点击快速载入)：</span>
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {SAMPLES_CATALOG.map(tpl => (
-                <button
-                  type="button"
-                  key={tpl.id}
-                  onClick={() => handleSelectTemplate(tpl.id)}
-                  className="text-left p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50 hover:border-sky-300 transition text-xs"
-                >
-                  <div className="font-bold text-slate-900">{tpl.title}</div>
-                  <div className="text-slate-500 mt-1">
-                    {tpl.subject} • {tpl.pageCount} 页 • 满分 {tpl.maximumMarks}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="border-t border-slate-100 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Title */}
             <div className="sm:col-span-2">
               <label className="font-semibold block mb-1">作业标题 *</label>
